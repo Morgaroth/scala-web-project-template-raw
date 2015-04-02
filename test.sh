@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
-rm -f uftest
-mkdir uftest
-g8 file://. --name=uftest --force
+rm -fr test-proj
+mkdir test-proj
+g8 file://. --name=test-proj --force
+cd test-proj
+sbt
