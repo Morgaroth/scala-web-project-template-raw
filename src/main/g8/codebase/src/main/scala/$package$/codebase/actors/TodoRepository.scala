@@ -38,7 +38,7 @@ class TodoRepository extends Actor with ActorLogging {
       sender() ! Success(PullResult(todo, wasInRepo))
       log.info(s"todo \$todo removed from repository (was in repo: \$wasInRepo")
     case GetTodos =>
-      sender() ! repository.toSet
+      sender() ! Success(repository.toSet)
       log.info(s"sent repository to actor \${sender()}")
   }
 
