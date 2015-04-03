@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-rm -fr test-proj
-mkdir test-proj
-g8 file://. --name=test-proj --force
-cd test-proj
+DIR=project-test
+rm -rf ${DIR}
+mkdir ${DIR}
+g8 file://. --name=${DIR} --force
+cd ${DIR}
 sbt
