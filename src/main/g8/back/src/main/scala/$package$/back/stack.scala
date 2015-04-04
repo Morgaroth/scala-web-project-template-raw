@@ -33,7 +33,7 @@ trait Service extends HasActorSystem with actors {
       pathEndOrSingleSlash {
         complete("")
       } ~
-      path("todo")(todoService.routes)
+      pathPrefix("todo")(todoService.routes)
     }
   }
   //@formatter:on

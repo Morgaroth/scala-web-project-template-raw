@@ -14,10 +14,10 @@ object TodoRepository {
   //@formatter:off
   object messages {
     case class PushTodo(todo: Todo)
-    case class PushResult(todo: Todo)
-    case class PullTodo(todo: Todo)
-    case class PullResult(todo: Todo, wasInRepository: Boolean)
+    case class PullTodo(id: String)
+    case class PullResult(maybeTodo: Option[Todo])
     case object GetTodos
+    case class GetTodo(id: String)
   }
   //@formatter:on
 
@@ -26,19 +26,23 @@ object TodoRepository {
 
 class TodoRepository extends Actor with ActorLogging {
 
-  val repository = mutable.Set.empty[Todo]
+  val repository = mutable.Map.empty[String, Todo]
 
   def receive = LoggingReceive {
     case PushTodo(todo) =>
-      repository += todo
-      sender ! Success(PushResult(todo))
+      repository += todo.id -> todo
+      sender ! Success(todo)
       log.info(s"todo \$todo pushed into repository")
-    case PullTodo(todo) =>
-      val wasInRepo = repository.remove(todo)
-      sender() ! Success(PullResult(todo, wasInRepo))
-      log.info(s"todo \$todo removed from repository (was in repo: \$wasInRepo")
+    case PullTodo(id) =>
+      val previously = repository.remove(id)
+      sender() ! Success(PullResult(previously))
+      log.info(s"todo of id \$id removed from repository (was in repo: \${previously.isDefined}")
+    case GetTodo(id) =>
+      val result = repository.get(id)
+      sender() ! Success(result)
+      log.info(s"todo \$id returned to \${sender()}")
     case GetTodos =>
-      sender() ! Success(repository.toSet)
+      sender() ! Success(repository.values.toList)
       log.info(s"sent repository to actor \${sender()}")
   }
 
